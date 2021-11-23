@@ -10,3 +10,6 @@
 
 ## Tasks
 
+Clarisse: 
+Week 23 novembre: Study on the popularity of movies within different companies, level of budget,genre and categorie. I will use cluster analysis, and distribution function analysis. Divide the data in several groups according to the factors cited above. 
+
