@@ -10,3 +10,7 @@
 
 ## Tasks
 
+Ilan
+I am going to study the evolution of the most represented directors in the data set:
+How do their rating evolve ?
+How do their box office revenus evolve
