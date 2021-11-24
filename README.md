@@ -17,4 +17,4 @@ Week 23 novembre: Study on the popularity of movies within different companies, 
 Week 23 novembre: Search for the link between budget and success (gross and score). How does this link evolved through time ?
 
 ### Raphaël
-24/11/21: Discovering the data set, going through quick geographical analysis. Most of the films comes from USA. It may be interesting to do an analysis without USA movies. 
+24/11/21: Discovering the data set, going through quick geographical analysis. Most of the films comes from USA. It may be interesting to do an analysis without USA movies. Look at https://www.the-numbers.com/ to compare the numbers of movies that come from USA from our data set and from external data sets.
