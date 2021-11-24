@@ -10,8 +10,11 @@
 
 ## Tasks
 
-Clarisse: 
+### Clarisse
 Week 23 novembre: Study on the popularity of movies within different companies, level of budget,genre and categorie. I will use cluster analysis, and distribution function analysis. Divide the data in several groups according to the factors cited above. 
 
-Paul :
+### Paul
 Week 23 novembre: Search for the link between budget and success (gross and score). How does this link evolved through time ?
+
+### Raphaël
+24/11/21: Discovering the data set, going through quick geographical analysis. Most of the films comes from USA. It may be interesting to do an analysis without USA movies. 
