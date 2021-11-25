@@ -41,6 +41,11 @@ sum(list_countries) - list_countries['United States'] #Output = 2188
 #Data frame
 list_countries <- as.data.frame.table(list_countries)
 
+
+ 
+#-----------------------------------------------------------------------------
+#Map with original data set -----
+
 #World data 
 data(World)
 country <- World[,c('iso_a3','name')]
@@ -72,7 +77,7 @@ country[[3]][42] <- country[[3]][42] + 12
 country[[3]][41] <- 8
 country[[3]][136] <- country[[3]][136] + 2
 country[[3]][104] <- 1
-country[[3]][169] <- 0
+
 
 #Create world data
 new_world <- cbind(World,country[[3]])
@@ -80,11 +85,14 @@ new_world <- new_world[-c(7,8),]
 colnames(new_world)[16] <- c('movies')
 
 map <- tm_shape(new_world) + tm_polygons('movies',
-                                         title = 'test',
+                                         title = '',
+                                         breaks = c(1,10,100,500,1000,10000),
+                                         textNA='0 or missing',
                                          legend.reverse=TRUE)
 map
 
-#Other data set
+#-----------------------------------------------------------------------------
+#Map with external data set -----
 
 df_thenumbers <- read.csv('/Users/raphaelmirallie/Documents/GitHub/Movies/Geography/thenumber_countries.csv')
 thenumber_country <- as.numeric(str_remove(as.character(df_thenumbers$No..of.Movies),","))
@@ -129,7 +137,32 @@ new_world <- cbind(new_world,country[[4]])
 colnames(new_world)[17] <- c('thenumbers_movies')
 
 map2 <- tm_shape(new_world) + tm_polygons('thenumbers_movies',
+                                         title = '',
+                                         textNA='0 or missing',
+                                         breaks = c(1,500,1000,5000,20000,25000),
                                          legend.reverse=TRUE)
 map2
+
+#The code below was replaced by the argument breaks in tm_polygons
+
+#Na <- setNames(data.frame(matrix(ncol = 1, nrow = 175)), c('Legend_thenumbers'))
+#country <- cbind(country,Na)
+#for (i in  1:length(country[[1]])){
+#  if (is.na(country[[4]][i])) {country[[5]][i] <- NA}
+#    else if (0 < country[[4]][i] && country[[4]][i] < 200) { country[[5]][i] <- "1 to 200"}
+#    else if (200 < country[[4]][i] && country[[4]][i]< 1000) { country[[5]][i] <- "200 to 1,000"}
+#    else if (1000 <= country[[4]][i] && country[[4]][i]< 10000) { country[[5]][i] <- "1,000 to 5,000"}
+#    else if (10000 <= country[[4]][i] && country[[4]][i]< 25000) { country[[5]][i] <- "10,000 to 25,000"}
+#    else {country[[5]][i] <-"Error"}
+#}
+
+#new_world <- cbind(new_world,country[[5]])
+
+#colnames(new_world)[18] <- c('thenumbers_movies_lab')
+
+#map4 <- tm_shape(new_world) + tm_polygons('thenumbers_movies_lab',
+#                                        title = '',
+#                                        textNA='0',
+#                                        legend.reverse=TRUE)
 
 
