@@ -84,4 +84,52 @@ map <- tm_shape(new_world) + tm_polygons('movies',
                                          legend.reverse=TRUE)
 map
 
-list_countries
+#Other data set
+
+df_thenumbers <- read.csv('/Users/raphaelmirallie/Documents/GitHub/Movies/Geography/thenumber_countries.csv')
+thenumber_country <- as.numeric(str_remove(as.character(df_thenumbers$No..of.Movies),","))
+df_thenumbers <- cbind(df_thenumbers,thenumber_country)
+
+#Add number_movies to country
+Na <- setNames(data.frame(matrix(ncol = 1, nrow = 177)), c('Number_movies'))
+country <- cbind(country,Na)
+rm(Na)
+for (c_world in country[[2]]){
+  for (c_movie in df_thenumbers[[1]]){
+    if (c_movie == c_world){
+      #print(list_countries[[2]][which(list_countries[[1]] == c_movie)])
+      #print(country[[3]][which(country[[2]] == c_world)])
+      country[[4]][which(country[[2]] == c_world)] <- df_thenumbers[[5]][which(df_thenumbers[[1]] == c_movie)] 
+    } 
+  }
+}
+rm(c_movie,c_world)
+
+#write.csv(df_thenumbers,'~/Desktop/thenumber_country.csv', row.names = FALSE)
+#write.csv(country,'~/Desktop/country_withna.csv', row.names = FALSE)
+
+country[[4]][88] <- 1194
+country[[4]][19] <- 23
+country[[4]][22] <- 8
+country[[4]][32] <- 1
+country[[4]][35] <- 1
+country[[4]][39] <- 13
+country[[4]][41] <- 289
+country[[4]][45] <- 22
+country[[4]][89] <- 8
+country[[4]][91] <- 2
+country[[4]][171] <- 25
+country[[4]][172] <- 23
+country[[4]][136] <- 931
+
+#Create world data
+country <- country[-c(7,8),]
+new_world <- cbind(new_world,country[[4]])
+
+colnames(new_world)[17] <- c('thenumbers_movies')
+
+map2 <- tm_shape(new_world) + tm_polygons('thenumbers_movies',
+                                         legend.reverse=TRUE)
+map2
+
+
