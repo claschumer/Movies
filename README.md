@@ -15,6 +15,9 @@
 
 ### Clarisse
 Week 23 novembre: Study on the popularity of movies within different companies, level of budget,genre and categorie. I will use cluster analysis, and distribution function analysis. Divide the data in several groups according to the factors cited above. 
+26/11/21: Analysis on the profit and the gross by each genre 
+27/11/21: 1) Analysis on which genre is most prominent in regions, and visualization with pie charts. 
+          2) Compute the correlation between score and budget in each categorie
 
 ### Paul
 Week 23 novembre: Search for the link between budget and success (gross and score). How does this link evolved through time ?
