@@ -25,3 +25,7 @@ Week 23 novembre: Search for the link between budget and success (gross and scor
 ### Raphaël
 24/11/21: Discovering the data set, going through quick geographical analysis. Most of the films comes from USA. It may be interesting to do an analysis without USA movies. Look at https://www.the-numbers.com/ to compare the numbers of movies that come from USA from our data set and from external data sets.
 25/11/21: Adding data from https://www.the-numbers.com/. Realization of maps for the original data set and the external data set. Comparison between the two. 
+
+
+### Marie
+Week 23 novembre: 1)Discovering the data: documentation context + plot correlation, box plot to observe the data landscpe. Choose problematic: a) What is the best release date (best in the sense of popular, votes) b) Wich actor and director to choose to have a popular movie ? Start to answer b) 
