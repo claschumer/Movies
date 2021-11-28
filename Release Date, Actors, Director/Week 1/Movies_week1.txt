@@ -1,0 +1,157 @@
+//------------------Data landscape---------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
+
+#Convert the data
+install.packages("readr")
+library("readr")
+data <- read_csv("C:\\Users\\fnac\\Desktop\\Semestre I\\Statistical computation and visualisation\\Projets\\3-Movies\\movies.csv")
+
+#Begin with some Correlation
+install.packages("corrplot")
+library(corrplot)
+num_data<-data.frame(data$year, data$score, data$votes, data$gross, data$budget, data$runtime)
+mcor <- cor(num_data, use="pairwise.complete.obs")
+colnames(mcor) <- c("Score", "Runtime", "Votes", "Gross", "Budget", "Year")
+rownames(mcor) <- c("Score", "Runtime", "Votes", "Gross", "Budget", "Year")
+corrplot(mcor)
+corrplot(mcor, method = "shade", shade.col = NA, tl.col = "black", tl.srt = 45,  addCoef.col = "black", order = "AOE")
+
+install.packages("ggplot2")
+library(ggplot)
+library(tidyverse)
+install.packages("cowplot")
+library(cowplot)
+library(colorspace)
+install.packages("ggrepel")
+library(ggrepel)
+
+q<-ggplot(data, aes(year, score) )+ geom_point(aes(color = genre, fill = genre), size = 2.5, alpha = 0.5, shape = 21 ) 
+q+labs(x = "release year", y = "Score", title = "Evolution of movies'score through time by genre") 
+
+ggplot(data, aes(x = score)) +
+  geom_histogram(fill = "white", colour = "black") +
+  facet_grid(genre ~ ., scales = "free")
+
+p <- ggplot(data,aes(genre,score))
+p + geom_boxplot(aes(col=genre)) + geom_jitter(width = 0.1,height=0,aes(color=genre)) +  theme(axis.text.x = element_blank())
+
+library(vioplot)
+x1 <- data$score
+x2 <- data$votes
+x3 <- data$budget
+x4 <- data$gross
+vioplot(x1, names=c("Score"), col=c("lightgreen"))
+vioplot(x2, names=c("Votes"), col=c("lightblue"))
+vioplot(x3, names=c("Budget"), col=c("palevioletred"))
+vioplot(x4, names=c("Gross"), col=c("lightorange"))
+
+install.packages("ggridges")
+library(ggridges)
+library(viridis)
+install.packages("hrbrthemes")
+library(hrbrthemes)
+
+ggplot(data, aes(x = score, y = genre, fill = ..x..)) +
+  geom_density_ridges_gradient(scale = 3, rel_min_height = 0.01) +
+  scale_fill_viridis(name = "Temp. [F]", option = "C") +
+  labs(title = 'Score by genre') +
+  theme_ipsum() +
+    theme(
+      legend.position="none",
+      panel.spacing = unit(0.1, "lines"),
+      strip.text.x = element_text(size = 8)
+    )
+
+p <- ggplot(data,aes(genre,gross))
+p + geom_boxplot(aes(col=genre)) + geom_jitter(width = 0.1,height=0,aes(color=genre)) +  theme(axis.text.x = element_blank())
+
+ggplot(data, aes(x=genre, y=gross, fill=name)) +
+    geom_violin() +
+    scale_fill_viridis(discrete = TRUE, alpha=0.6, option="A") +
+    theme_ipsum() +
+    theme(
+      legend.position="none",
+      plot.title = element_text(size=11)
+    ) +
+    ggtitle("Violin chart") +
+    xlab("")
+
+ggplot(data, aes(x=year, y=gross, group=genre, fill=genre)) +
+    geom_area() +
+    scale_fill_viridis(discrete = TRUE) +
+    theme(legend.position="none") +
+    ggtitle("Gross of movies by genre between 1980 and 2020") +
+    theme_ipsum() +
+    theme(
+      legend.position="none",
+      panel.spacing = unit(0.1, "lines"),
+      strip.text.x = element_text(size = 8)
+    ) +
+    facet_wrap(~genre, scale="free_y")
+
+
+ ggplot(data, aes(x=year, y=gross, group=genre, color=genre)) +
+    geom_line() +
+    scale_color_viridis(discrete = TRUE) +
+    theme(legend.position="none") +
+    ggtitle("Gross of movies by genre between 1980 and 2020") +
+    theme_ipsum()
+
+ggplot(data, aes(x=gross, y=genre, fill = genre)) +
+  geom_density_ridges() +
+  theme_ridges() + 
+  theme(legend.position = "none")
+
+//------------------Which actor---------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
+
+#Create a indicator for each actors
+
+
+install.packages("dplyr")
+library("dplyr")
+data2 <- na.omit(data)
+actor <- data2[,c(10)]
+actor <- na.omit(actor)
+actor<-distinct(actor,star, .keep_all= TRUE)
+actor['mean_profit_margin'] <- NA
+actor['mean_score'] <- NA
+actor['nbr_movies'] <- NA
+
+
+for(i in 1:nrow(actor)){
+	actor[i,2]=0 
+	actor[i,3]=0
+	actor[i,4]=0
+	for(j in 1:nrow(data2)){
+		if(data2[j,10]==actor[i,1]){
+		actor[i,2]=actor[i,2]+((data2[j,13] -data2[j,12])/data2[j,13])
+		actor[i,3]=actor[i,3]+data2[j,6]
+		actor[i,4]=actor[i,4]+1}
+	}
+}
+
+actor2 <- subset(actor, actor$nbr_movies > 5 )
+actor2['Score_Mean']<- actor2$mean_score/actor2$nbr_movies
+actor2['Margin_Mean']<- actor2$mean_profit_margin/actor2$nbr_movies 
+actor3<-actor2[,c(1,5,6)]
+
+Top_actor3<-subset(actor3, actor3$Score_Mean > 7.016667)
+install.packages("forcats")
+library(forcats)
+  ggplot(Top_actor3, aes(x=reorder(star, Score_Mean), y=Score_Mean, fill=star)) +
+  geom_bar(stat="identity", alpha=.6, width=.4) +
+  coord_flip() +
+  xlab("") +
+  theme_bw()
+
+
+Not_Top_actor3<-subset(actor3, actor3$Score_Mean < 5.858333)
+install.packages("forcats")
+library(forcats)
+  ggplot(Not_Top_actor3, aes(x=reorder(star, Score_Mean), y=Score_Mean, fill=star)) +
+  geom_bar(stat="identity", alpha=.6, width=.4) +
+  coord_flip() +
+  xlab("") +
+  theme_bw()
+
