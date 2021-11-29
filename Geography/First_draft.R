@@ -84,11 +84,12 @@ new_world <- cbind(World,country[[3]])
 new_world <- new_world[-c(7,8),]
 colnames(new_world)[16] <- c('movies')
 
-map <- tm_shape(new_world) + tm_polygons('movies',
+map <- tm_shape(new_world) + tm_layout(frame = FALSE) + tm_polygons('movies',
                                          title = '',
                                          breaks = c(1,10,100,500,1000,10000),
                                          textNA='0 or missing',
                                          legend.reverse=TRUE)
+
 map
 
 #-----------------------------------------------------------------------------
@@ -136,7 +137,7 @@ new_world <- cbind(new_world,country[[4]])
 
 colnames(new_world)[17] <- c('thenumbers_movies')
 
-map2 <- tm_shape(new_world) + tm_polygons('thenumbers_movies',
+map2 <- tm_shape(new_world) + tm_layout(frame = FALSE) + tm_polygons('thenumbers_movies',
                                          title = '',
                                          textNA='0 or missing',
                                          breaks = c(1,500,1000,5000,20000,25000),
