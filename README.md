@@ -29,4 +29,4 @@ Week 23 novembre: Search for the link between budget and success (gross and scor
 
 
 ### Marie
-Week 23 novembre: 1)Discovering the data: documentation context + plot correlation, box plot to observe the data landscpe. Choose problematic: a) What is the best release date (best in the sense of popular, votes) b) Wich actor and director to choose to have a popular movie ? Start to answer b) 
+Week 23 novembre: 1)Discovering the data: documentation context + plot correlation, box plot to observe the data landscape and to find a problematic. Choose problematic: a) What is the best release date (best in the sense of popular, votes) b) Wich actor and director to choose to have a popular movie ? Start to answer b) 
