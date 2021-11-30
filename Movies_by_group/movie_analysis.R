@@ -17,6 +17,10 @@ library(stringr)
 library(ggrepel)
 library(scales)
 library(forcats)
+library(lares)
+library(knitr)
+library(ggridges)
+
 
 #Import data
 movies <- read_csv("~/Desktop/Project_3_SCV/movies.csv")
@@ -73,7 +77,7 @@ mean_animation <- mean(animation_movie$score)
 sd_animation <- sd(animation_movie$score)
 #Biography: 
 mean_biography <- mean(biography_movie$score)
-sd_biography<- mean(biography_movie$score)
+sd_biography<- sd(biography_movie$score)
 #Comedy: 
 mean_comedy <- mean(comedy_movie$score)
 sd_comedy <- sd(comedy_movie$score)
@@ -89,41 +93,6 @@ ggplot(combine,aes(x=genre,y=score,fill=genre)) + geom_boxplot() + scale_fill_br
 
 #Histogram of each category: 
 ggplot(combine,aes(x=genre,y=score,fill=genre)) + geom_col() + scale_fill_brewer(palette='YlOrRd') + labs(c="genre",y="Score") + theme(axis.text.x = element_text(angle=90))
-
-#Cluster analysis in each genre: 
-
-#Action:
-data_action <- data.frame(action_movie$name,action_movie$score,action_movie$budget,action_movie$gross,action_movie$runtime)
-data_cluster_action <- data_action[-1]
-
-kluster <- kmeans(data_cluster_action,centers=5)
-data_action$cluster <- as.factor(kluster$cluster)
-table(kluster$cluster)
-ggplot(data_action,aes(x=cluster,y=action_movie.score,col=cluster)) + geom_point(alpha=0.6) + geom_jitter() + labs(x="Clusters",y="Score",colour="clusters") + scale_color_brewer(palette='YlOrRd')
-
-#Optimal number of cluster 
-fviz_nbclust(data_cluster_action,kmeans,method="silhouette")  + labs(subtitle="Average Silhouette")
-
-#Repeat clustering with two cluster: 
-data_action_2 <- data.frame(action_movie$name,action_movie$score,action_movie$budget,action_movie$gross,action_movie$runtime)
-data_cluster_action_2 <- data_action_2[-1]
-
-kluster_2 <- kmeans(data_cluster_action_2,centers=2)
-data_action_2$cluster <- as.factor(kluster_2$cluster)
-table(kluster_2$cluster)
-ggplot(data_action_2,aes(x=cluster,y=action_movie.score,col=cluster)) + geom_point(alpha=0.6) + geom_jitter() + labs(x="Clusters",y="Score",colour="clusters") + scale_color_brewer(palette='YlOrRd')
-
-#Comedy:
-data_comedy <- data.frame(comedy_movie$name,comedy_movie$score,comedy_movie$budget,comedy_movie$gross,comedy_movie$runtime)
-data_cluster_comedy <- data_comedy[-1]
-
-kluster_com <- kmeans(data_cluster_comedy,centers=5)
-data_comedy$cluster <- as.factor(kluster_com$cluster)
-table(kluster_com$cluster)
-ggplot(data_comedy,aes(x=cluster,y=comedy_movie.score,col=cluster)) + geom_point(alpha=0.6) + geom_jitter() + labs(x="Clusters",y="Score",colour="clusters") + scale_color_brewer(palette='YlOrRd')
-
-#Optimal number of cluster 
-fviz_nbclust(data_cluster_comedy,kmeans,method="silhouette")  + labs(subtitle="Average Silhouette")
 
 #Which genre have the highest revenue/budget ? 
 gross_budget_action <- mean(action_movie$gross_budget)
@@ -204,4 +173,106 @@ cor(adventure_movie$score,adventure_movie$budget,method="pearson")
 cor(romance_movie$score,romance_movie$budget,method="pearson")
 cor(comedy_movie$score,comedy_movie$budget,method="pearson")
 cor(horror_movie$score,horror_movie$budget,method = "pearson")
+
+#Cluster analysis in each genre: 
+
+#Action:
+data_action <- data.frame(action_movie$name,action_movie$score,action_movie$budget,action_movie$gross,action_movie$runtime)
+data_cluster_action <- data_action[-1]
+
+kluster <- kmeans(data_cluster_action,centers=5)
+data_action$cluster <- as.factor(kluster$cluster)
+table(kluster$cluster)
+ggplot(data_action,aes(x=cluster,y=action_movie.score,col=cluster)) + geom_point(alpha=0.6) + geom_jitter() + labs(x="Clusters",y="Score",colour="clusters") + scale_color_brewer(palette='YlOrRd')
+
+#Optimal number of cluster 
+fviz_nbclust(data_cluster_action,kmeans,method="silhouette")  + labs(subtitle="Average Silhouette")
+
+#Repeat clustering with two cluster: 
+data_action_2 <- data.frame(action_movie$name,action_movie$score,action_movie$budget,action_movie$gross,action_movie$runtime)
+data_cluster_action_2 <- data_action_2[-1]
+
+kluster_2 <- kmeans(data_cluster_action_2,centers=2)
+data_action_2$cluster <- as.factor(kluster_2$cluster)
+table(kluster_2$cluster)
+ggplot(data_action_2,aes(x=cluster,y=action_movie.score,col=cluster)) + geom_point(alpha=0.6) + geom_jitter() + labs(x="Clusters",y="Score",colour="clusters") + scale_color_brewer(palette='YlOrRd')
+
+#Comedy:
+data_comedy <- data.frame(comedy_movie$name,comedy_movie$score,comedy_movie$budget,comedy_movie$gross,comedy_movie$runtime)
+data_cluster_comedy <- data_comedy[-1]
+
+kluster_com <- kmeans(data_cluster_comedy,centers=5)
+data_comedy$cluster <- as.factor(kluster_com$cluster)
+table(kluster_com$cluster)
+ggplot(data_comedy,aes(x=cluster,y=comedy_movie.score,col=cluster)) + geom_point(alpha=0.6) + geom_jitter() + labs(x="Clusters",y="Score",colour="clusters") + scale_color_brewer(palette='YlOrRd')
+
+#Optimal number of cluster 
+fviz_nbclust(data_cluster_comedy,kmeans,method="silhouette")  + labs(subtitle="Average Silhouette")
+
+#Create dummy variables for genre:
+clean_movie$ind_genre <- rep(0,length(clean_movie$name))
+for ( i in 1:length(clean_movie$genre)){
+  if ( clean_movie$genre[i]== "Action"){clean_movie$ind_genre[i] = 1}
+  if ( clean_movie$genre[i]== "Adventure"){clean_movie$ind_genre[i] = 2}
+  if ( clean_movie$genre[i]== "Animation"){clean_movie$ind_genre[i] = 3}
+  if ( clean_movie$genre[i]== "Biography"){clean_movie$ind_genre[i] = 4}
+  if ( clean_movie$genre[i]== "Comedy"){clean_movie$ind_genre[i] = 5}
+  if ( clean_movie$genre[i]== "Crime"){clean_movie$ind_genre[i] = 6}
+  if (clean_movie$genre[i] == "Drama"){clean_movie$ind_genre[i] = 7}
+  if ( clean_movie$genre[i]== "Family"){clean_movie$ind_genre[i] = 8}
+  if ( clean_movie$genre[i]== "Fantasy"){clean_movie$ind_genre[i] = 9}
+  if ( clean_movie$genre[i]== "Mystery"){clean_movie$ind_genre[i] = 10}
+  if ( clean_movie$genre[i]== "Horror"){clean_movie$ind_genre[i] = 11}
+  if ( clean_movie$genre[i]== "Romance"){clean_movie$ind_genre[i] = 12}
+  if ( clean_movie$genre[i]== "Sci-Fi"){clean_movie$ind_genre[i] = 13}
+  if ( clean_movie$genre[i]== "Thriller"){clean_movie$ind_genre[i] = 14}
+  if ( clean_movie$genre[i]== "Western"){clean_movie$ind_genre[i] = 15}
+}
+
+#Indicator of Company:
+clean_movie$ind_gross = rep(0,length(clean_movie$name))
+for ( k in 1:length(clean_movie$score)){
+  if ( clean_movie$gross[k] < 1.074e+07) {clean_movie$ind_gross[k] = 1}
+  if( clean_movie$gross[k] > 1.074e+07 & clean_movie$gross[k] < 1.125e+08){clean_movie$ind_gross[k] = 2}
+  if(clean_movie$gross[k] > 1.125e+08){clean_movie$ind_gross[k] = 3}
+}
+clean_movie$ind_USA <- rep(0,length(clean_movie$name))
+for(j in 1:length(clean_movie$rating)){
+  if(clean_movie$country[j] == "USA"){clean_movie$ind_USA = 1}
+}
+
+#Log of gross and budget because avec skweness ( talk in the introduction)
+clean_movie$loggross <- log(clean_movie$gross)
+clean_movie$logbudget <- log(clean_movie$budget)
+
+#Use gower metric due to presence of factor: 
+movie_cluster <- data.frame(clean_movie$name,clean_movie$score,clean_movie$ind_genre,clean_movie$ind_gross,clean_movie$loggross,clean_movie$logbudget)
+movie_cluster_without_name <- movie_cluster[-c(1)]
+
+gower_df <- daisy(movie_cluster_without_name,metric="gower")
+
+cluster_number <- 2:15
+sil_values <- map_dbl(cluster_number,function(x){pam_clusters=pam(as.matrix(gower_df),diss = TRUE,k=x) 
+pam_clusters$silinfo$avg.width})
+cluster_data <- data.frame(cluster=cluster_number,silhouette_width = sil_values)
+
+ggplot(cluster_data,aes(cluster,silhouette_width)) + geom_point() + geom_line() + scale_x_continuous(breaks = c(1:15))
+
+#Check the number of movies in each cluster
+pam_data = pam(gower_df,diss=TRUE,k=3)
+
+movie_cluster$cluster <- pam_data$clustering
+
+ggplot(movie_cluster) + geom_bar(aes(cluster), fill = "Coral") + 
+  scale_x_continuous(breaks = c(1:12))
+
+ggplot(movie_cluster) + geom_density_ridges(aes(x=clean_movie.ind_genre,y=factor(cluster)),fill="coral") + ylab("cluster") + xlab("Genre")
+ggplot(movie_cluster) + geom_density_ridges(aes(x=clean_movie.loggross,y=factor(cluster)),fill="red") + ylab("cluster") + xlab("Log Gross")
+
+movie_cluster %>% group_by(cluster,clean_movie.ind_genre) %>% dplyr::summarise(n=n()) %>% ggplot() + geom_raster(aes(cluster,clean_movie.ind_genre,fill=n)) + scale_x_continuous(breaks=c(1:12))
+#Check the profile of each cluster
+
+#Are genres spread out in the clusters ? 
+
+
 
