@@ -86,7 +86,7 @@ colnames(new_world)[16] <- c('movies')
 
 map <- tm_shape(new_world) + tm_layout(frame = FALSE) + tm_polygons('movies',
                                          title = '',
-                                         breaks = c(1,10,100,500,1000,10000),
+                                         breaks = c(1,10,100,500,1000,6000),
                                          textNA='0 or missing',
                                          legend.reverse=TRUE)
 
@@ -166,4 +166,30 @@ map2
 #                                        textNA='0',
 #                                        legend.reverse=TRUE)
 
+#-----------------------------------------------------------------------------
+#Percentage per country -----
+
+
+movie1 <- new_world$movies
+movie1[is.na(movie1)] <- 0
+names(movie1) <- new_world$name
+movie1 <- movie1 / sum(movie1) * 100
+movie1 <- sort(movie1, decreasing = TRUE)
+movie1 <- movie1[1:20]
+movie11 <- format(round(movie1, 2), nsmall = 2)
+movie11 <- as.double(movie11)
+names(movie11) <- names(movie1)
+
+movie2 <- new_world$thenumbers_movies
+movie2[is.na(movie2)] <- 0
+names(movie2) <- new_world$name
+movie2 <- movie2 / sum(movie2) * 100
+movie2 <- sort(movie2, decreasing = TRUE)
+movie2 <- movie2[1:20]
+movie22 <- format(round(movie2, 2), nsmall = 2)
+movie22 <- as.double(movie22)
+names(movie22) <- names(movie2)
+
+write.csv(movie11,'~/Desktop/movie1.csv')
+write.csv(movie22,'~/Desktop/movie2.csv')
 
