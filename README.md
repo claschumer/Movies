@@ -19,6 +19,7 @@ Week 23 novembre: Study on the popularity of movies within different companies, 
 27/11/21: 1) Analysis on which genre is most prominent in regions, and visualization with pie charts. 
           2) Compute the correlation between score and budget in each categorie
 29/11/21: Create indicator for type of genre, type of company, variable for log of gross and log of budget, indictor of movies released in USA, and perform cluster analysis. Find optimal number of clusters, and visualization of each variable in a cluster. 
+01/12/21: Finalization of cluster analysis, and define profile of each cluster. Clean the code and review for consistency. 
 
 ### Paul
 Week 23 novembre: Search for the link between budget and success (gross and score). How does this link evolved through time ?
