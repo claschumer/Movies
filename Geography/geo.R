@@ -1,4 +1,42 @@
+library(dplyr)
+library(cluster)
+library(factoextra)
+library(gridExtra)
+library(tidyr)
+library(NbClust)
+library(GGally)
+library(tmap)
+library(ggplot2)
+library(grid)
+library(lattice)
+library(spData)
+library(Rcpp)
+library(RColorBrewer)
+library(data.table)
+library(tmaptools)
+library(sf)
+library(raster)
+library(tibble)
+library(tidyverse)
+library(leaflet) 
 
+
+
+rm(list = ls())
+
+#Import data 
+df <- read.csv('/Users/raphaelmirallie/Documents/GitHub/Movies/movies.csv')
+
+#Get the country of origin
+list_countries <- table(df$country)
+list_countries <- sort(list_countries,decreasing = TRUE)
+list_countries <- list_countries[c(-35)] #Remove NA
+
+#Percentage of film from USA
+list_countries['United States'] / sum(list_countries) #Output = 71%
+
+#Number of film not from USA
+sum(list_countries) - list_countries['United States'] #Output = 2188
 #Data frame
 list_countries <- as.data.frame.table(list_countries)
 
