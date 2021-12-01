@@ -26,9 +26,8 @@ library(ggridges)
 movies <- read_csv("~/Desktop/Project_3_SCV/movies.csv")
 
 #Choose a palette
-color <- brewer.pal(5, 'YlOrRd' )
-display.brewer.pal(5, 'YlOrRd')
-bigcolor <- brewer.pal(10,'YlOrRd')
+color <- brewer.pal(9, 'YlOrRd' )
+pal <- colorRampPalette(color)
 
 #How many movies ? -> 7668
 length(movies$name)
@@ -89,10 +88,16 @@ mean_horror <- mean(horror_movie$score)
 sd_horror <- sd(horror_movie$score)
 
 combine <- rbind(action_movie,adventure_movie,animation_movie,biography_movie,comedy_movie,drama_movie,horror_movie)
+
+
+#Boxplot
 ggplot(combine,aes(x=genre,y=score,fill=genre)) + geom_boxplot() + scale_fill_brewer(palette='YlOrRd') + labs(x="Genre",y="Score",fill="Colour") + theme(axis.text.x = element_text(angle=90))
 
 #Histogram of each category: 
-ggplot(combine,aes(x=genre,y=score,fill=genre)) + geom_col() + scale_fill_brewer(palette='YlOrRd') + labs(c="genre",y="Score") + theme(axis.text.x = element_text(angle=90))
+ggplot(clean_movie,aes(x=genre,y=score,fill=genre)) + geom_col() + scale_fill_manual(values=pal(15)) + labs(c="Genre",y="Score") + theme(axis.text.x = element_text(angle=90))
+
+#Ridge Plot: 
+ggplot(clean_movie) + geom_density_ridges(aes(x=score,y =factor(genre),fill=genre)) + scale_fill_manual(values=pal(15)) + labs(c="Genre",y="Score") 
 
 #Which genre have the highest revenue/budget ? 
 gross_budget_action <- mean(action_movie$gross_budget)
@@ -123,10 +128,10 @@ gross_budget_drama <- mean(drama_movie$gross_budget)
 gross_budget_drama
 
 #Histogram on profit by genre
-ggplot(clean_movie,aes(x=genre,y=gross,fill=genre)) + geom_col(fill="#BD0026") + labs(c="genre",y="Gross") + theme(axis.text.x = element_text(angle=90))
+ggplot(clean_movie,aes(x=genre,y=log(gross),fill=genre)) + geom_col() + labs(c="genre",y="Log of the Gross") + theme(axis.text.x = element_text(angle=90)) + scale_fill_manual(values= pal(15))
 
 #Histogram on gross by genre
-ggplot(clean_movie,aes(x=genre,y=budget,fill=genre)) + geom_col(fill="#BD0026") + labs(c="genre",y="Budget") + theme(axis.text.x = element_text(angle=90))
+ggplot(clean_movie,aes(x=genre,y=log(budget),fill=genre)) + geom_col() + labs(c="Genre",y="Log of the Budget") + theme(axis.text.x = element_text(angle=90)) + scale_fill_manual(values= pal(15))
 
 #Which genre is most prominent in regions ? 
 #Number of countries: 50 
@@ -150,14 +155,14 @@ count_france$percentage <- 100*count_france$freq /sum(count_france$freq)
 count_france <- format(count_france,digits=2,justfy="none")
 count_france<- type.convert(count_france)
 count_france <- count_france[-c(8,10),]
-ggplot(count_france,aes(x="",y=percentage,fill=genre)) + geom_bar(stat="identity") + coord_polar("y") + scale_fill_manual(values=c("Coral","Coral1","tan1","sienna","Coral4","Red3","Red4","orangered","tomate","tomato3")) +labs(x="",y="Genre") + geom_text(aes(x=1.6,label=paste0(percentage,"%")),position=position_stack(vjust=0.5))+ theme(panel.background = element_blank(),axis.line = element_blank(),axis.text = element_blank(),axis.ticks = element_blank(),axis.title = element_blank()) 
+ggplot(count_france,aes(x="",y=percentage,fill=genre)) + geom_bar(stat="identity") + coord_polar("y") + scale_fill_manual(values=pal(10)) +labs(x="",y="Genre") + geom_text(aes(x=1.6,label=paste0(percentage,"%")),position=position_stack(vjust=0.5))+ theme(panel.background = element_blank(),axis.line = element_blank(),axis.text = element_blank(),axis.ticks = element_blank(),axis.title = element_blank()) 
 
 #German                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
 count_german <- count(movie_german,vars="genre")
 count_german$percentage <- 100*count_german$freq /sum(count_german$freq)
 count_german <- format(count_german,digits=2,justfy="none")
 count_german<- type.convert(count_german)
-ggplot(count_german,aes(x="",y=percentage,fill=genre)) + geom_bar(stat="identity") + coord_polar("y") + scale_fill_manual(values=c("Coral","Coral1","tan1","sienna","Coral4","Red3","Red4")) +labs(x="",y="Genre") + geom_text(aes(x=1.6,label=paste0(percentage,"%")),position=position_stack(vjust=0.5))+ theme(panel.background = element_blank(),axis.line = element_blank(),axis.text = element_blank(),axis.ticks = element_blank(),axis.title = element_blank()) 
+ggplot(count_german,aes(x="",y=percentage,fill=genre)) + geom_bar(stat="identity") + coord_polar("y") + scale_fill_manual(values=pal(7)) +labs(x="",y="Genre") + geom_text(aes(x=1.6,label=paste0(percentage,"%")),position=position_stack(vjust=0.5))+ theme(panel.background = element_blank(),axis.line = element_blank(),axis.text = element_blank(),axis.ticks = element_blank(),axis.title = element_blank()) 
 
 #UK 
 count_UK <- count(movie_UK,vars="genre")
@@ -165,7 +170,7 @@ count_UK$percentage <- 100*count_UK$freq /sum(count_UK$freq)
 count_UK <- format(count_UK,digits=2,justfy="none")
 count_UK<- type.convert(count_UK)
 count_UK <- count_UK[-c(3,8,9,10,11,12,13,14),]
-ggplot(count_UK,aes(x="",y=percentage,fill=genre)) + geom_bar(stat="identity") + coord_polar("y") + scale_fill_manual(values=c("Coral","Coral1","tan1","sienna","Coral4","Red3","Red4","tomato","tomato3")) +labs(x="",y="Genre") + geom_text(aes(x=1.6,label=paste0(percentage,"%")),position=position_stack(vjust=0.5))+ theme(panel.background = element_blank(),axis.line = element_blank(),axis.text = element_blank(),axis.ticks = element_blank(),axis.title = element_blank()) 
+ggplot(count_UK,aes(x="",y=percentage,fill=genre)) + geom_bar(stat="identity") + coord_polar("y") + scale_fill_manual(values=pal(9)) +labs(x="",y="Genre") + geom_text(aes(x=1.6,label=paste0(percentage,"%")),position=position_stack(vjust=0.5))+ theme(panel.background = element_blank(),axis.line = element_blank(),axis.text = element_blank(),axis.ticks = element_blank(),axis.title = element_blank()) 
 
 #Correlation between score and budget in each categorie: 
 cor(action_movie$score,action_movie$budget,method="pearson")
@@ -173,41 +178,6 @@ cor(adventure_movie$score,adventure_movie$budget,method="pearson")
 cor(romance_movie$score,romance_movie$budget,method="pearson")
 cor(comedy_movie$score,comedy_movie$budget,method="pearson")
 cor(horror_movie$score,horror_movie$budget,method = "pearson")
-
-#Cluster analysis in each genre: 
-
-#Action:
-data_action <- data.frame(action_movie$name,action_movie$score,action_movie$budget,action_movie$gross,action_movie$runtime)
-data_cluster_action <- data_action[-1]
-
-kluster <- kmeans(data_cluster_action,centers=5)
-data_action$cluster <- as.factor(kluster$cluster)
-table(kluster$cluster)
-ggplot(data_action,aes(x=cluster,y=action_movie.score,col=cluster)) + geom_point(alpha=0.6) + geom_jitter() + labs(x="Clusters",y="Score",colour="clusters") + scale_color_brewer(palette='YlOrRd')
-
-#Optimal number of cluster 
-fviz_nbclust(data_cluster_action,kmeans,method="silhouette")  + labs(subtitle="Average Silhouette")
-
-#Repeat clustering with two cluster: 
-data_action_2 <- data.frame(action_movie$name,action_movie$score,action_movie$budget,action_movie$gross,action_movie$runtime)
-data_cluster_action_2 <- data_action_2[-1]
-
-kluster_2 <- kmeans(data_cluster_action_2,centers=2)
-data_action_2$cluster <- as.factor(kluster_2$cluster)
-table(kluster_2$cluster)
-ggplot(data_action_2,aes(x=cluster,y=action_movie.score,col=cluster)) + geom_point(alpha=0.6) + geom_jitter() + labs(x="Clusters",y="Score",colour="clusters") + scale_color_brewer(palette='YlOrRd')
-
-#Comedy:
-data_comedy <- data.frame(comedy_movie$name,comedy_movie$score,comedy_movie$budget,comedy_movie$gross,comedy_movie$runtime)
-data_cluster_comedy <- data_comedy[-1]
-
-kluster_com <- kmeans(data_cluster_comedy,centers=5)
-data_comedy$cluster <- as.factor(kluster_com$cluster)
-table(kluster_com$cluster)
-ggplot(data_comedy,aes(x=cluster,y=comedy_movie.score,col=cluster)) + geom_point(alpha=0.6) + geom_jitter() + labs(x="Clusters",y="Score",colour="clusters") + scale_color_brewer(palette='YlOrRd')
-
-#Optimal number of cluster 
-fviz_nbclust(data_cluster_comedy,kmeans,method="silhouette")  + labs(subtitle="Average Silhouette")
 
 #Create dummy variables for genre:
 clean_movie$ind_genre <- rep(0,length(clean_movie$name))
@@ -229,50 +199,99 @@ for ( i in 1:length(clean_movie$genre)){
   if ( clean_movie$genre[i]== "Western"){clean_movie$ind_genre[i] = 15}
 }
 
-#Indicator of Company:
-clean_movie$ind_gross = rep(0,length(clean_movie$name))
-for ( k in 1:length(clean_movie$score)){
-  if ( clean_movie$gross[k] < 1.074e+07) {clean_movie$ind_gross[k] = 1}
-  if( clean_movie$gross[k] > 1.074e+07 & clean_movie$gross[k] < 1.125e+08){clean_movie$ind_gross[k] = 2}
-  if(clean_movie$gross[k] > 1.125e+08){clean_movie$ind_gross[k] = 3}
+#Indicator of biggest company: 
+clean_movie$ind_company <- rep(0,length(clean_movie$genre))
+count_company <- count(clean_movie$company)
+big_company <- count_company$x[which(count_company$freq>50)]
+middle_company <- count_company$x[which(count_company$freq< 50  & count_company$freq > 1)]
+small_company <-count_company$x[which(count_company$freq == 1)]
+
+for ( k in 1:length(big_company)){
+  for(j in 1:length(clean_movie$name)){
+    if(clean_movie$company[j] == big_company[k]){clean_movie$ind_company[j] = 1}
+    }
 }
+
+for ( k in 1:length(middle_company)){
+  for(j in 1:length(clean_movie$name)){
+    if(clean_movie$company[j] == middle_company[k]){clean_movie$ind_company[j] = 2}
+  }
+}
+
+for ( k in 1:length(small_company)){
+  for(j in 1:length(clean_movie$name)){
+    if(clean_movie$company[j] == small_company[k]){clean_movie$ind_company[j] = 1}
+  }
+}
+
+#Indicator of USA:
 clean_movie$ind_USA <- rep(0,length(clean_movie$name))
 for(j in 1:length(clean_movie$rating)){
-  if(clean_movie$country[j] == "USA"){clean_movie$ind_USA = 1}
+  if(clean_movie$country[j] == "United States"){clean_movie$ind_USA[j] = 1}
 }
 
 #Log of gross and budget because avec skweness ( talk in the introduction)
 clean_movie$loggross <- log(clean_movie$gross)
 clean_movie$logbudget <- log(clean_movie$budget)
 
+#Indicator of big star: 
+clean_movie$ind_star <- rep(0,length(clean_movie$genre))
+count_star <- count(clean_movie$star)
+big_star <- count_star$x[which(count_star$freq>20)]
+middle_star <- count_star$x[which(count_star$freq< 50  & count_star$freq > 1)]
+small_star <-count_star$x[which(count_star$freq == 1)]
+
+for ( k in 1:length(big_star)){
+  for(j in 1:length(clean_movie$name)){
+    if(clean_movie$star[j] == big_star[k]){clean_movie$ind_star[j] = 1}
+  }
+}
+
+for ( k in 1:length(middle_star)){
+  for(j in 1:length(clean_movie$name)){
+    if(clean_movie$star[j] == middle_star[k]){clean_movie$ind_star[j] = 2}
+  }
+}
+
+for ( k in 1:length(small_star)){
+  for(j in 1:length(clean_movie$name)){
+    if(clean_movie$star[j] == small_star[k]){clean_movie$ind_star[j] = 1}
+  }
+}
+
 #Use gower metric due to presence of factor: 
-movie_cluster <- data.frame(clean_movie$name,clean_movie$score,clean_movie$ind_genre,clean_movie$ind_gross,clean_movie$loggross,clean_movie$logbudget)
+movie_cluster <- data.frame(clean_movie$name,clean_movie$score,clean_movie$ind_genre,clean_movie$ind_company,clean_movie$loggross,clean_movie$logbudget,clean_movie$ind_USA,clean_movie$ind_star)
 movie_cluster_without_name <- movie_cluster[-c(1)]
 
 gower_df <- daisy(movie_cluster_without_name,metric="gower")
 
-cluster_number <- 2:15
+cluster_number <- 2:18
 sil_values <- map_dbl(cluster_number,function(x){pam_clusters=pam(as.matrix(gower_df),diss = TRUE,k=x) 
 pam_clusters$silinfo$avg.width})
 cluster_data <- data.frame(cluster=cluster_number,silhouette_width = sil_values)
 
-ggplot(cluster_data,aes(cluster,silhouette_width)) + geom_point() + geom_line() + scale_x_continuous(breaks = c(1:15))
+ggplot(cluster_data,aes(cluster,silhouette_width)) + geom_point() + geom_line() + scale_x_continuous(breaks = c(1:18)) + labs(x="Clusters",y="Silhouette width")
 
 #Check the number of movies in each cluster
-pam_data = pam(gower_df,diss=TRUE,k=3)
+pam_data = pam(gower_df,diss=TRUE,k=6)
 
 movie_cluster$cluster <- pam_data$clustering
 
-ggplot(movie_cluster) + geom_bar(aes(cluster), fill = "Coral") + 
-  scale_x_continuous(breaks = c(1:12))
+#Movies by cluster
+ggplot(movie_cluster) + geom_bar(aes(cluster),fill = pal(6)) + scale_x_continuous(breaks = c(1:12))
 
-ggplot(movie_cluster) + geom_density_ridges(aes(x=clean_movie.ind_genre,y=factor(cluster)),fill="coral") + ylab("cluster") + xlab("Genre")
-ggplot(movie_cluster) + geom_density_ridges(aes(x=clean_movie.loggross,y=factor(cluster)),fill="red") + ylab("cluster") + xlab("Log Gross")
+#Density ridge for score and log gross:
+ggplot(movie_cluster) + geom_density_ridges(aes(x=movie_cluster$clean_movie.score,y=factor(cluster),fill=factor(cluster))) + scale_fill_manual(values = pal(6)) + labs(x="cluster",y ="Genre",fill = "Clusters")  
+ggplot(movie_cluster) + geom_density_ridges(aes(x=clean_movie.loggross,y=factor(cluster),fill=factor(cluster))) + ylab("cluster") + xlab("Log Gross") + scale_fill_manual(values = pal(6))
 
-movie_cluster %>% group_by(cluster,clean_movie.ind_genre) %>% dplyr::summarise(n=n()) %>% ggplot() + geom_raster(aes(cluster,clean_movie.ind_genre,fill=n)) + scale_x_continuous(breaks=c(1:12))
+#Genre in each cluster
+movie_cluster %>% group_by(cluster,clean_movie.ind_genre) %>% dplyr::summarise(n=n()) %>% ggplot() + geom_raster(aes(cluster,clean_movie.ind_genre, fill=factor(n))) + scale_x_continuous(breaks=c(1:6)) + scale_fill_manual(values = pal(47),name="n") +  scale_y_continuous(name = "Genre",breaks = c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15),labels=c("Action","Adventure","Animation","Biography","Comedy","Crime","Drama","Family","Fantasy","Mystery","Horror","Romance","Sci-Fi","Thriller","Western")) + theme(legend.position = "none")
+
 #Check the profile of each cluster
+clus4_average <- movie_cluster %>% group_by(cluster) %>% summarize_if(is.numeric,mean,na.rm=TRUE)
+clus4_average <- rename(clus4_average, c("clean_movie.score" = " Score","clean_movie.ind_genre"="Genre ", "clean_movie.ind_company"="Company","clean_movie.loggross" = "Log Gross","clean_movie.logbudget"="Log Budget","clean_movie.ind_USA" ="Country","clean_movie.ind_star"="Star"))
+ggparcoord(clus4_average, columns= c(2:8), groupColumn = "cluster",scale="uniminmax",order="skewness") + theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))+ labs(x="Features",y="Values") + scale_color_viridis(option="rocket") 
 
-#Are genres spread out in the clusters ? 
 
 
 
