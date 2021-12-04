@@ -1,0 +1,85 @@
+\\---Continue actors study----------------------------------------------
+
+qplot(actor3$Score_Mean,
+       geom="histogram",
+       main = "Histogram for Actor's Score mean", 
+       xlab = "Score Mean",  
+       fill=I("lightblue"), 
+       col=I("red"))
+
+
+actor4<-merge(Top_actor3, data2, all.x=TRUE)
+
+ggplot(actor4) + 
+  geom_bar(aes(star, fill = genre)) + 
+  theme(axis.text.x = element_text(angle = 90, size = 6, vjust = 0.5),
+        legend.text = element_text(size = 6))
+
+
+\\---Director study-------------------------------------------------
+
+install.packages("dplyr")
+library("dplyr")
+data2 <- na.omit(data)
+director <- data2[,c(8)]
+director <- na.omit(director)
+director2<-distinct(director,director, .keep_all= TRUE)
+director2['gross'] <- NA
+director2['score'] <- NA
+director2['nbr_movies'] <- NA
+
+for(i in 1:nrow(director2)){
+	director2[i,2]=0 
+	director2[i,3]=0
+	director2[i,4]=0
+	for(j in 1:nrow(data2)){
+		if(data2[j,8]==director2[i,1]){
+		director2[i,2]=director2[i,2]+((data2[j,13]-data2[j,12])/data2[j,13])
+		director2[i,3]=director2[i,3]+data2[j,6]
+		director2[i,4]=director2[i,4]+1}
+	}
+}
+
+hist(director2$nbr_movies)
+director2b <- subset(director2, director2$nbr_movies> 2 )
+director2b['Score_Mean']<- director2b$score/director2b$nbr_movies
+director2b['Margin_Mean']<- director2b$gross/director2b$nbr_movies
+director3<-director2b[,c(1,5,6)]
+
+ qplot(director3$Score_Mean,
+       geom="histogram",
+       main = "Histogram for Director's Score mean", 
+       xlab = "Score Mean",  
+       fill=I("lightblue"), 
+       col=I("red"))
+
+install.packages("forcats")
+library(forcats)
+
+Top_director3<-subset(director3, director3$Score_Mean > 7.550000)
+  ggplot(Top_director3, aes(x=reorder(director, Score_Mean), y=Score_Mean, fill=director)) +
+  geom_bar(stat="identity", alpha=.6, width=.4) +
+  coord_flip() +
+  xlab("") +
+  theme_bw()
+
+
+Not_Top_director3<-subset(director3, director3$Score_Mean < ?????)
+  ggplot(Not_Top_director3, aes(x=reorder(director, Score_Mean), y=Score_Mean, fill=director)) +
+  geom_bar(stat="identity", alpha=.6, width=.4) +
+  coord_flip() +
+  xlab("") +
+  theme_bw()
+
+
+director4<-merge(Top_director3, data2, all.x=TRUE)
+
+ggplot(actor4) + 
+  geom_bar(aes(director, fill = genre)) + 
+  theme(axis.text.x = element_text(angle = 90, size = 6, vjust = 0.5),
+        legend.text = element_text(size = 6))
+
+
+
+
+

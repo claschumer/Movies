@@ -1,0 +1,272 @@
+//------------------Which actor---------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
+
+#Create indicator popularity and profitabilty for each actors--------------------------------------------------------------------------------------------
+
+install.packages("dplyr")
+library("dplyr")
+data2 <- na.omit(data)
+actor <- data2[,c(10)]
+actor <- na.omit(actor)
+actor<-distinct(actor,star, .keep_all= TRUE)
+actor['mean_profit'] <- NA
+actor['mean_score'] <- NA
+actor['nbr_movies'] <- NA
+
+
+for(i in 1:nrow(actor)){
+	actor[i,2]=0 
+	actor[i,3]=0
+	actor[i,4]=0
+	for(j in 1:nrow(data2)){
+		if(data2[j,10]==actor[i,1]){
+		actor[i,2]=actor[i,2]+(data2[j,13]-data2[j,12])
+		actor[i,3]=actor[i,3]+data2[j,6]
+		actor[i,4]=actor[i,4]+1}
+	}
+}
+
+actor2 <- subset(actor, actor$nbr_movies > 5 )
+actor2['Score_Mean']<- actor2$mean_score/actor2$nbr_movies
+actor2['Profit_Mean']<- actor2$mean_profit/actor2$nbr_movies 
+actor3<-actor2[,c(1,5,6)]
+
+#Visualize Popularity and actors--------------------------------------------------------------------------------------------
+
+Top_Pop_actor3<-subset(actor3, actor3$Score_Mean > 7.016667)
+install.packages("forcats")
+library(forcats)
+  ggplot(Top_actor3, aes(x=reorder(star, Score_Mean), y=Score_Mean, fill=star)) +
+  geom_bar(stat="identity", alpha=.6, width=.4) +
+  coord_flip() +
+  xlab("") +
+  theme_bw()
+
+Not_Top_Pop_actor3<-subset(actor3, actor3$Score_Mean < 5.858333)
+install.packages("forcats")
+library(forcats)
+  ggplot(Not_Top_actor3, aes(x=reorder(star, Score_Mean), y=Score_Mean, fill=star)) +
+  geom_bar(stat="identity", alpha=.6, width=.4) +
+  coord_flip() +
+  xlab("") +
+  theme_bw()
+
+ qplot(actor3$Score_Mean,
+       geom="histogram",
+       main = "Histogram for Actor's Score mean", 
+       xlab = "Score Mean",  
+       fill=I("lightblue"), 
+       col=I("red"))
+
+
+boxplot(actor3$Score_Mean,
+xlab = "Score Mean",
+col = "lightblue",
+border = "red",
+horizontal = TRUE,
+notch = TRUE
+)
+
+##Test if better to divide mean score of each actor by mean score all movie
+
+mean_score_all_movies=mean(data2$score)
+actor3['Score2']<- actor3$mean_score/mean_score_all_movies
+
+
+Top2_Pop_actor3<-subset(actor3, actor3$Score2 > 1.097648)
+  ggplot(Top2_Pop_actor3, aes(x=reorder(star, Score2), y=Score2, fill=star)) +
+  geom_bar(stat="identity", alpha=.6, width=.4) +
+  coord_flip() +
+  xlab("") +
+  theme_bw()
+
+Not_Top2_Pop_actor3<-subset(actor3, actor3$Score2 < 0.9164449)
+  ggplot(Not_Top2_Pop_actor3, aes(x=reorder(star, Score2), y=Score2, fill=star)) +
+  geom_bar(stat="identity", alpha=.6, width=.4) +
+  coord_flip() +
+  xlab("") +
+  theme_bw()
+
+#Visualize Profitability and actors--------------------------------------------------------------------------------------------
+
+Top_Profit_actor3<-subset(actor3, actor3$Profit_Mean > 168113464)
+install.packages("forcats")
+library(forcats)
+  ggplot(Top_Profit_actor3, aes(x=reorder(star, Profit_Mean), y=Profit_Mean, fill=star)) +
+  geom_bar(stat="identity", alpha=.6, width=.4) +
+  coord_flip() +
+  xlab("") +
+  theme_bw()
+
+Not_Top_Profit_actor3<-subset(actor3, actor3$Profit_Mean < 7774848.8)
+install.packages("forcats")
+library(forcats)
+  ggplot(Not_Top_Profit_actor3, aes(x=reorder(star, Profit_Mean), y=Profit_Mean, fill=star)) +
+  geom_bar(stat="identity", alpha=.6, width=.4) +
+  coord_flip() +
+  xlab("") +
+  theme_bw()
+
+ qplot(actor3$Profit_Mean,
+       geom="histogram",
+       main = "Histogram for Actor's Profit mean", 
+       xlab = "Profit Mean",  
+       fill=I("lightblue"), 
+       col=I("red"))
+
+
+boxplot(actor3$Profit_Mean,
+xlab = "Score Mean",
+col = "lightblue",
+border = "red",
+horizontal = TRUE,
+notch = TRUE
+)
+
+##Test if better to divide mean score of each actor by mean score all movie
+
+mean_profit_all=mean(actor3$Profit_Mean)
+actor3['Profit2']<- actor3$Profit_Mean/mean_profit_all
+
+
+Top2_Profit_actor3<-subset(actor3, actor3$Profit2 > 2.116547)
+  ggplot(Top2_Profit_actor3, aes(x=reorder(star, Profit2), y=Profit2, fill=star)) +
+  geom_bar(stat="identity", alpha=.6, width=.4) +
+  coord_flip() +
+  xlab("") +
+  theme_bw()
+
+
+#Visualize Popularity and Profitability of actors by Genre--------------------------------------------------------------------------------------------
+
+
+actor4_Pop<-merge(Top_Pop_actor3, data2, all.x=TRUE)
+
+ggplot(actor4_Pop) + 
+  geom_bar(aes(star, fill = genre)) + 
+  theme(axis.text.x = element_text(angle = 90, size = 6, vjust = 0.5),
+        legend.text = element_text(size = 6))
+
+
+actor4_Profit<-merge(Top_Profit_actor3, data2, all.x=TRUE)
+
+ggplot(actor4_Profit) + 
+  geom_bar(aes(star, fill = genre)) + 
+  theme(axis.text.x = element_text(angle = 90, size = 6, vjust = 0.5),
+        legend.text = element_text(size = 6))
+
+
+movies <- data2[,c(1,3,12,13)]
+movies['profit'] <- movies$gross-movies$budget
+
+ggplot(movies, aes(x = profit, y = genre, fill = ..x..)) +
+  geom_density_ridges_gradient(scale = 3, rel_min_height = 0.01) +
+  scale_fill_viridis(name = "Temp. [F]", option = "C") +
+  labs(title = 'Profit by genre') +
+  theme_ipsum() +
+    theme(
+      legend.position="none",
+      panel.spacing = unit(0.1, "lines"),
+      strip.text.x = element_text(size = 8)
+    )
+
+ggplot(movies, aes(x=profit, y=genre, fill = genre)) +
+  geom_density_ridges() +
+  theme_ridges() + 
+  theme(legend.position = "none")
+
+actor_pop_profit<-merge(Top_Profit_actor3, Top_Pop_actor3, all=FALSE)
+
+
+
+//------------------Which release date---------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
+
+
+movies_date <- data2[,c(1,3, 4, 5, 6, 10, 12, 13)]
+movies_date <- na.omit(movies_date)
+movies_date['month'] <- NA
+
+
+for(i in 1:nrow(movies_date)){
+	movies_date[i,9]= word(movies_date[i,4], 1)
+	
+}
+
+
+
+movies_month= table(movies_date$month)
+movies_month = as.data.frame(movies_month)
+names(movies_month)[1] = 'month'
+names(movies_month)[2] = 'Frequency'
+movies_month2 <- movies_month[-c(1,2,3,4,5), ]
+list_month<-c("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
+movies_month3<-merge(list_month, movies_month2)
+movies_month4<-movies_month3[c(49,38,87,4,101, 78, 67, 20, 141, 130, 119, 36),]
+
+
+movies_month4$month<- factor(movies_month4$month, levels = movies_month4$month)
+ggplot(movies_month4,aes(x=month,y=Frequency))+geom_bar(stat="identity", fill='lightblue')
+
+movies_date <- movies_date [-c(172,438,621,1638,2711), ]
+movies_date['Profit'] <- movies_date$gross-movies_date$budget
+
+movies_date$month<- factor(movies_date$month, levels = movies_month4$month)
+p <- ggplot(movies_date,aes(x=month,y=Profit)) + geom_jitter(width = 0.1,height=0,aes(color=month)) +  theme(axis.text.x = element_blank())
+
+movies_date$month<- factor(movies_date$month, levels = movies_month4$month)
+ggplot(movies_date,aes(x=month,y=Profit))+geom_boxplot(aes(col=month))
+
+profit_month<-aggregate(movies_date[, 9], list(movies_date$month), mean)
+names(profit_month)[1] = 'month'
+profit_month$month<- factor(profit_month$month, levels = movies_month4$month)
+ggplot(profit_month,aes(x=month,y=Profit))+geom_bar(stat="identity", fill='lightblue')
+
+
+date5<-merge(movies_date, profit_month, by=month)
+names(date5)[10] = 'Profit'
+names(date5)[11] = 'Mean_Profit'
+
+ggplot(date5, aes(x=month, y=Mean_Profit, group=genre, color=genre)) +
+    geom_line()
+
+date5_april<-date5[c(1:422),]
+date5_august<-date5[c(423:937),]
+date5_december<-date5[c(938:1388),]
+date5_february<-date5[c(1389:1806),]
+date5_january<-date5[c(1807:2250),]
+date5_july<-date5[c(2251:2696),]
+date5_june<-date5[c(2697:3123),]
+date5_march<-date5[c(3124:3572),]
+date5_may<-date5[c(3573:3962),]
+date5_november<-date5[c(3963:4457),]
+date5_october<-date5[c(4458:4979),]
+date5_september<-date5[c(4980:5416),]
+
+profit_april<-aggregate(date5_april[, 10], list(date5_april$genre), mean)
+profit_august<-aggregate(date5_august[, 10], list(date5_august$genre), mean)
+profit_december<-aggregate(date5_december[, 10], list(date5_december$genre), mean)
+profit_february<-aggregate(date5_february[, 10], list(date5_february$genre), mean)
+profit_january<-aggregate(date5_january[, 10], list(date5_january$genre), mean)
+profit_july<-aggregate(date5_july[, 10], list(date5_july$genre), mean)
+profit_june<-aggregate(date5_june[, 10], list(date5_june$genre), mean)
+profit_march<-aggregate(date5_march[, 10], list(date5_march$genre), mean)
+profit_may<-aggregate(date5_may[, 10], list(date5_may$genre), mean)
+profit_november<-aggregate(date5_november[, 10], list(date5_november$genre), mean)
+profit_october<-aggregate(date5_october[, 10], list(date5_october$genre), mean)
+profit_september<-aggregate(date5_september[, 10], list(date5_september$genre), mean)
+
+install.packages("writexl")
+library("writexl")
+write_xlsx(profit_april,"C:\\Users\\fnac\\Desktop\\data\\april.xlsx")
+write_xlsx(profit_august,"C:\\Users\\fnac\\Desktop\\data\\august.xlsx")
+write_xlsx(profit_december,"C:\\Users\\fnac\\Desktop\\data\\december.xlsx")
+write_xlsx(profit_february,"C:\\Users\\fnac\\Desktop\\data\\february.xlsx")
+write_xlsx(profit_january,"C:\\Users\\fnac\\Desktop\\data\\january.xlsx")
+write_xlsx(profit_july,"C:\\Users\\fnac\\Desktop\\data\\july.xlsx")
+write_xlsx(profit_june,"C:\\Users\\fnac\\Desktop\\data\\june.xlsx")
+write_xlsx(profit_march,"C:\\Users\\fnac\\Desktop\\data\\march.xlsx")
+write_xlsx(profit_may,"C:\\Users\\fnac\\Desktop\\data\\may.xlsx")
+write_xlsx(profit_november,"C:\\Users\\fnac\\Desktop\\data\\november.xlsx")
+write_xlsx(profit_october,"C:\\Users\\fnac\\Desktop\\data\\october.xlsx")
+write_xlsx(profit_september,"C:\\Users\\fnac\\Desktop\\data\\september.xlsx")
