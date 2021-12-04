@@ -33,4 +33,4 @@ Week
 
 
 ### Marie
-Week 23 novembre: 1)Discovering the data: documentation context + plot correlation, box plot to observe the data landscape and to find a problematic. Choose problematic: a) What is the best release date (best in the sense of popular, votes) b) Wich actor and director to choose to have a popular movie ? Start to answer b) 
+Week 23 novembre: 1)Discovering the data: documentation context + plot correlation, box plot to observe the data landscape and to find a problematic. Choose problematic: a) What is the best release date (best in the sense of popular, votes) b) Wich actor and director to choose to have a popular movie ? Start to answer b). Week 29 november: Continue to answer b), study the which actor to make a popular or profitable movie + look at the choice of director but finally Ilan will study it. Instead go further in the study of the actor by look at the genre. Then answer a), look at the number of released by months, the average profit by month and the average profit by month and by genre. The difficulty here was to build the good data frame from the based data to plot our figures.
