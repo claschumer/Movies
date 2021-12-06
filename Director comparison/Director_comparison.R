@@ -1,0 +1,258 @@
+library(ggplot2)
+library(RColorBrewer)
+
+
+data <- read.csv("C:/Users/ilanp/Documents/EPFL/Mathématiques/MA master sem 3 automne 2021/Statistical Computation and Visualization/Movies/movies.csv")
+directors <- data$director
+
+# to analyse the directors, I need first to sample the one that are the most represented
+# let us start by creating a vector assigning to each entry of 'directors' the number of time it appears in the dataset.
+# For example as "Stanley Kubrick" appears 3 times, the first entry of this vector will be 3.
+
+n <- length(directors)
+director_appearance <- sapply(c(1:n), function(i) sum(1*(directors == directors[i])))
+
+# Now I need to retrieve the most represented directors from this vector
+director_name <- NULL
+# 1st most represented director
+first <- which.max(director_appearance)
+director_name[1] <- directors[first]
+woody_allen <- grep(director_name[1], directors)
+
+# 2nd most represented director
+change_director <- director_appearance
+for (i in 1:length(woody_allen)) {
+  change_director[woody_allen[i]] <- 0 # this change is to get the position of the second most represented director
+}
+second <- which.max(change_director)
+director_name[2] <- directors[second]
+Clint_Eastwood <- grep(director_name[2], directors)
+
+
+# 3nd most represented director
+for (i in 1:length(Clint_Eastwood)) {
+  change_director[Clint_Eastwood[i]] <- 0 # this change is to get the position of the second most represented director
+}
+third <- which.max(change_director)
+director_name[3] <- directors[third]
+multiple_directors <- grep(director_name[3], directors)
+# oups this must be deleted because "directors refers to multiple directors
+for (i in 1:length(multiple_directors)) {
+  change_director[multiple_directors[i]] <- 0 # this change is to get the position of the second most represented director
+}
+third <- which.max(change_director)
+director_name[3] <- directors[third]
+Steven_Spielberg <- grep(director_name[3], directors)
+
+# 4th most represented director
+for (i in 1:length(Steven_Spielberg)) {
+  change_director[Steven_Spielberg[i]] <- 0 # this change is to get the position of the second most represented director
+}
+fourth <- which.max(change_director)
+director_name[4] <- directors[fourth]
+Ron_Howard <- grep(director_name[4], directors)
+
+# 5th most represented director
+for (i in 1:length((Ron_Howard))) {
+  change_director[Ron_Howard[i]] <- 0 # this change is to get the position of the second most represented director
+}
+fifth <- which.max(change_director)
+director_name[5] <- directors[fifth]
+Ridley_Scott <- grep(director_name[5], directors)
+
+# 6th most represented director
+for (i in 1:length((Ridley_Scott))) {
+  change_director[Ridley_Scott[i]] <- 0 # this change is to get the position of the second most represented director
+}
+sixth <- which.max(change_director)
+director_name[6] <- directors[sixth]
+Steven_Soderbergh <- grep(director_name[6], directors)
+
+# 7th most represented director
+for (i in 1:length((Steven_Soderbergh))) {
+  change_director[Steven_Soderbergh[i]] <- 0 # this change is to get the position of the second most represented director
+}
+seventh <- which.max(change_director)
+director_name[7] <- directors[seventh]
+Joel_Schumacher <- grep(director_name[7], directors)
+
+# 8th most represented director
+for (i in 1:length((Joel_Schumacher))) {
+  change_director[Joel_Schumacher[i]] <- 0 # this change is to get the position of the second most represented director
+}
+eigth <- which.max(change_director)
+director_name[8] <- directors[eigth]
+Barry_Levinson <- grep(director_name[8], directors)
+
+# 9th most represented director
+for (i in 1:length((Barry_Levinson))) {
+  change_director[Barry_Levinson[i]] <- 0 # this change is to get the position of the second most represented director
+}
+ninth <- which.max(change_director)
+director_name[9] <- directors[ninth]
+Martin_Scorsese <- grep(director_name[9], directors)
+
+# 10th most represented director
+for (i in 1:length((Martin_Scorsese))) {
+  change_director[Martin_Scorsese[i]] <- 0 # this change is to get the position of the second most represented director
+}
+tenth <- which.max(change_director)
+director_name[10] <- directors[tenth]
+Tim_Burton <- grep(director_name[10], directors)
+
+
+# plot a box plot with directors and the genre of their movies
+################################################################
+
+#Choose a palette
+color <- brewer.pal(9, 'YlOrRd' )
+pal <- colorRampPalette(color)
+
+# vector of each genre
+all_genre <- c("Action", "Adventure", "Animation", "Biography", "Comedy", "Crime", "Drama", "Family", "Fantasy", "History", "Horror", "Music", "Musical", "Mystery", "Romance", "Sci-Fi", "Sport", "Thriller", "Western")
+# check of the representiation of each gender
+movie_per_gender <- function(name, i){
+  index <- which(directors == name)
+  number <- sum(1* (data$genre[index] == all_genre[i]))
+  return(number)
+}
+check <- sapply( c(1:length(all_genre)), function(i) sum(sapply(director_name, function(x) movie_per_gender(x, i))))
+genre_to_be_removed <- which(check == 0)
+genre_considered <- all_genre[-genre_to_be_removed]
+l <- length(genre_considered)
+director_name_plot <- c(rep(director_name[1], l), rep(director_name[2], l), rep(director_name[3], l), rep(director_name[4], l), rep(director_name[5], l),
+                        rep(director_name[6], l), rep(director_name[7], l), rep(director_name[8], l), rep(director_name[9], l), rep(director_name[10], l))
+genre_plot <- rep(genre_considered, 10)
+value_plot <- NULL
+for (i in 1:10){
+  for( j in 1:l){
+    value_plot[j + l*(i-1)] <- movie_per_gender(director_name[i], j)
+  }
+}
+data_plot <- data.frame(director_name_plot, value_plot, genre_plot)
+ggplot(data_plot, aes(fill = genre_plot, y = value_plot, x = director_name_plot)) +
+  geom_bar(position = "stack", stat = "identity") +
+  scale_fill_manual(values=pal(l))+
+  theme_bw() +
+  theme(axis.title = element_text(size = 25), axis.text = element_text(size=20))+
+  labs(fill="Genre",y="Number of movies")+
+  theme(axis.text.x = element_text(angle=90))+
+  theme(axis.title.x=element_blank())
+
+
+## Descriptive study of the evolution of each director
+########################################################
+
+# creation of two plot functions, one for the score of a movie, the other one for all questions related to money
+
+makeplot_score <- function(x, y, ylim){
+  
+  # x : year of the movie
+  # y : score of a movie
+  # ylim : range of the y axis, as it changes in between countries -cluster
+  
+  plot(y = y, x= x, ylim = ylim, 
+       type = 'o', pch=20, col = color[3], lwd = 4, cex = 2,
+       xlab = 'Year', ylab = 'score', cex.lab = 2, cex.axis = 1.7)
+}
+
+makeplot_revenue <- function(x, y_1, y_2, ylim, x_leg, y_leg){
+  
+  # x : year of the movie
+  # y_1 : first data points, linked to gross of a movie
+  # y_2 : second data points, linked to budget of a movie
+  # ylim : range of the y axis
+  # x_leg, y_leg : position of the legend
+  
+  plot(y = y_1, x= x, ylim = ylim, 
+       type = 'o', pch=20, col = color[2], lwd = 4, cex = 2,
+       xlab = 'Year', ylab = 'log of revenue in dollar', cex.lab = 2, cex.axis = 1.7)
+  points(y= y_2, x= x, 
+         type = 'o', pch=20, col = color[4], lwd = 4, cex =2)
+  legend(x = x_leg, y = y_leg, legend = c("Gross", "Budget"), col=c(color[2], color[3]), lty = 1, lwd = 6, cex =1.5, bty = "n")
+}
+
+#plot and pearson test for Woody Allen
+year <- data$year[woody_allen]
+score <- data$score[woody_allen]
+gross <- data$gross[woody_allen]
+budget <- data$budget[woody_allen]
+
+makeplot_score(x = year, y = score, ylim = c(0,10))
+makeplot_revenue(x = year, y_1 = log(gross), y_2 = log(budget), ylim = c(10,25), x_leg = 2008, y_leg = 24)
+
+res_pearson_score <- cor.test(year, score , method = "pearson")
+res_pearson_score
+res_pearson_budget <- cor.test(year, budget , method = "pearson")
+res_pearson_budget
+res_pearson_gross <- cor.test(year, gross , method = "pearson")
+res_pearson_gross
+
+
+#plot and pearson test for Clint Eastwood
+year <- data$year[Clint_Eastwood]
+score <- data$score[Clint_Eastwood]
+gross <- data$gross[Clint_Eastwood]
+budget <- data$budget[Clint_Eastwood]
+
+makeplot_score(x = year, y = score, ylim = c(0,10))
+makeplot_revenue(x = year, y_1 = log(gross), y_2 = log(budget), ylim = c(10,25), x_leg = 2008, y_leg = 24)
+
+res_pearson_score <- cor.test(year, score , method = "pearson")
+res_pearson_score
+res_pearson_budget <- cor.test(year, budget , method = "pearson")
+res_pearson_budget
+res_pearson_gross <- cor.test(year, gross , method = "pearson")
+res_pearson_gross
+
+
+#plot and pearson test for Steven Spielberg
+year <- data$year[Steven_Spielberg]
+score <- data$score[Steven_Spielberg]
+gross <- data$gross[Steven_Spielberg]
+budget <- data$budget[Steven_Spielberg]
+
+makeplot_score(x = year, y = score, ylim = c(0,10))
+makeplot_revenue(x = year, y_1 = log(gross), y_2 = log(budget), ylim = c(10,25), x_leg = 2008, y_leg = 24)
+
+res_pearson_score <- cor.test(year, score , method = "pearson")
+res_pearson_score
+res_pearson_budget <- cor.test(year, budget , method = "pearson")
+res_pearson_budget
+res_pearson_gross <- cor.test(year, gross , method = "pearson")
+res_pearson_gross
+
+
+#plot and pearson test for Ron Howard
+year <- data$year[Ron_Howard]
+score <- data$score[Ron_Howard]
+gross <- data$gross[Ron_Howard]
+budget <- data$budget[Ron_Howard]
+
+makeplot_score(x = year, y = score, ylim = c(0,10))
+makeplot_revenue(x = year, y_1 = log(gross), y_2 = log(budget), ylim = c(10,25), x_leg = 2008, y_leg = 24)
+
+res_pearson_score <- cor.test(year, score , method = "pearson")
+res_pearson_score
+res_pearson_budget <- cor.test(year, budget , method = "pearson")
+res_pearson_budget
+res_pearson_gross <- cor.test(year, gross , method = "pearson")
+res_pearson_gross
+
+
+#plot and pearson test for Ridley Scott
+year <- data$year[Ridley_Scott]
+score <- data$score[Ridley_Scott]
+gross <- data$gross[Ridley_Scott]
+budget <- data$budget[Ridley_Scott]
+
+makeplot_score(x = year, y = score, ylim = c(0,10))
+makeplot_revenue(x = year, y_1 = log(gross), y_2 = log(budget), ylim = c(10,25), x_leg = 2008, y_leg = 24)
+
+res_pearson_score <- cor.test(year, score , method = "pearson")
+res_pearson_score
+res_pearson_budget <- cor.test(year, budget , method = "pearson")
+res_pearson_budget
+res_pearson_gross <- cor.test(year, gross , method = "pearson")
+res_pearson_gross
+
