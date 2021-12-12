@@ -23,8 +23,9 @@ Week 23 novembre: Study on the popularity of movies within different companies, 
 
 ### Paul
 Week 23 novembre: a first search for the link between budget and success into some plots (gross then score) without taking inflation into account. How does this link evolved through time ?
-Week 30 novembre: looking at some relevant US inflation historical datas. I tried to interpret the results, some more intuitive than others. (then investigating on the evolution through time).
-Week 
+Week 30 novembre: looking at some relevant US inflation historical datas. I corrected the values taking inflation into account. I tried to interpret the results for a global evolution
+and did some statistic investigation for the evolution of the score and the net profit. I also did a quick analysis decade per decade. 
+Week 7 december : global correction of the report
 
 ### Raphaël
 24/11/21: Discovering the data set, going through quick geographical analysis. Most of the films comes from USA. It may be interesting to do an analysis without USA movies. Look at https://www.the-numbers.com/ to compare the numbers of movies that come from USA from our data set and from external data sets.
