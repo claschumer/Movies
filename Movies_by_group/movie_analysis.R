@@ -94,7 +94,7 @@ combine <- rbind(action_movie,adventure_movie,animation_movie,biography_movie,co
 ggplot(combine,aes(x=genre,y=score,fill=genre)) + geom_boxplot() + scale_fill_brewer(palette='YlOrRd') + labs(x="Genre",y="Score",fill="Colour") + theme(axis.text.x = element_text(angle=90))
 
 #Histogram of each category: 
-ggplot(clean_movie,aes(x=genre,y=score,fill=genre)) + geom_col() + scale_fill_manual(values=pal(15)) + labs(c="Genre",y="Score") + theme(axis.text.x = element_text(angle=90))
+ggplot(clean_movie) + geom_bar(aes(x=genre,y=score,fill=genre),stat= "summary") + scale_fill_manual(values=pal(15)) + labs(c="Genre",y="Score") + theme(axis.text.x = element_text(angle=90))
 
 #Ridge Plot: 
 ggplot(clean_movie) + geom_density_ridges(aes(x=score,y =factor(genre),fill=genre)) + scale_fill_manual(values=pal(15)) + labs(c="Genre",y="Score") 
@@ -127,11 +127,15 @@ gross_budget_SCIFI
 gross_budget_drama <- mean(drama_movie$gross_budget)
 gross_budget_drama
 
-#Histogram on profit by genre
-ggplot(clean_movie,aes(x=genre,y=log(gross),fill=genre)) + geom_col() + labs(c="genre",y="Log of the Gross") + theme(axis.text.x = element_text(angle=90)) + scale_fill_manual(values= pal(15))
-
 #Histogram on gross by genre
-ggplot(clean_movie,aes(x=genre,y=log(budget),fill=genre)) + geom_col() + labs(c="Genre",y="Log of the Budget") + theme(axis.text.x = element_text(angle=90)) + scale_fill_manual(values= pal(15))
+
+clean_movie$logbudget <- log(clean_movie$budget)
+clean_movie$loggross <- log(clean_movie$gross)
+
+ggplot(clean_movie) + geom_bar(aes(x=genre,y=loggross,fill=genre),stat= "summary")+ labs(c="genre",y="Log of the Gross") + theme(axis.text.x = element_text(angle=90)) + scale_fill_manual(values= pal(15))
+
+#Histogram on budget by genre
+ggplot(clean_movie) + geom_bar(aes(x=genre,y=logbudget,fill=genre),stat= "summary") + labs(c="Genre",y="Log of the Budget") + theme(axis.text.x = element_text(angle=90)) + scale_fill_manual(values= pal(15))
 
 #Which genre is most prominent in regions ? 
 #Number of countries: 50 
